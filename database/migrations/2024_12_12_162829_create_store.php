@@ -9,24 +9,29 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+    
+
     public function up(): void
     {
-        Schema::create('addresses', function (Blueprint $table) {
-            $table->id();
-            $table->decimal('longitude', 8, 2);
-            $table->decimal('latitude', 8, 2);
-            $table->text('description');
-            $table->string('pos_code');
-            $table->timestamps();
-        });
 
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_owner')->constrained("users")->onDelete('cascade');
             $table->string('name');
-            $table->string('number_phone');
-            $table->foreignId('id_address')->constrained("addresses")->onDelete('cascade');
-            $table->string('url_image');
+            $table->string('number_phone')->nullable()->default("");
+            $table->timestamps();
+        });
+
+        Schema::create('addresses', function (Blueprint $table) {
+            $table->id();
+            $table->decimal('longitude', 8, 2);
+            $table->decimal('latitude', 8, 2);
+            $table->string('postal_code');
+            $table->string('jalan')->default("");
+            $table->foreignId('id_store')->constrained("stores")->onDelete('cascade');
+            $table->string('provinsi');
+            $table->string('kota');
+            $table->string('negara');
             $table->timestamps();
         });
 
@@ -43,7 +48,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('addresses');
-        Schema::dropIfExists('stores');
         Schema::dropIfExists('staff');
+        Schema::dropIfExists('stores');
     }
 };

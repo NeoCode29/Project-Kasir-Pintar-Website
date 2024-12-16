@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->string('number_phone');
+            $table->string('number_phone')->nullable();
             $table->enum('roles', ['administrator', 'owner', 'staff'])->default('owner');
             $table->timestamps();
         });
@@ -38,7 +38,21 @@ return new class extends Migration
             $table->integer('last_activity')->index();
         });
 
-        
+        Schema::create('notifications', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained("users")->onDelete('cascade');
+            $table->string('message');
+            $table->boolean('is_read')->default(false);
+            $table->timestamps();
+        });
+
+        Schema::create('invitations', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained("users")->onDelete('cascade');
+            $table->string('email');
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
+        });
     }
 
     /**
@@ -46,8 +60,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('invitations');
+        Schema::dropIfExists('notifications');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };
