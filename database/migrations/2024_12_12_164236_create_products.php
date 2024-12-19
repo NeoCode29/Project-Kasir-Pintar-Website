@@ -21,13 +21,13 @@ return new class extends Migration
             $table->id();
             $table->string('name_product');
             $table->string('code_product');
-            $table->decimal('selling_price', 8, 2);
-            $table->decimal('purchase_price', 8, 2);
+            $table->decimal('selling_price', 13,2);
+            $table->decimal('purchase_price', 13,2);
             $table->integer('stock');
             $table->string('unit');
             $table->string('url_image');
-            $table->foreignId('id_store')->constrained("stores")->onDelete('cascade');
-            $table->foreignId('id_category_product')->constrained("category_products")->onDelete('cascade');
+            $table->foreignId('store_id')->constrained("stores")->onDelete('cascade');
+            $table->foreignId('category_product_id')->constrained("category_products")->onDelete('cascade');
             $table->timestamps();
         });
     }

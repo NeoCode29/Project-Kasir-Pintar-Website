@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Store;
-use Illuminate\Support\Facades\Validator;
 
 class StoreController extends Controller
 {
-
     public function index($id_owner)
     {
         $stores = Store::where('id_owner', $id_owner)->get();
@@ -89,6 +87,4 @@ class StoreController extends Controller
 
         return response()->json($store);
     }
-
-    
 }

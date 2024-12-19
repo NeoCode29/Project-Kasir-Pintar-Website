@@ -13,6 +13,6 @@ class Address extends Model
     
     public function store()
     {
-        return $this->belongsTo(Store::class, 'id_store');
+        return $this->belongsTo(Store::class, 'store_id');
     }
 }

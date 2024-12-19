@@ -36,11 +36,16 @@ class User extends Authenticatable
 
     public function stores()
     {
-        return $this->hasMany(Store::class, 'id_owner');
+        return $this->hasMany(Store::class, 'owner_id');
     }
 
     public function addresses()
     {
-        return $this->hasMany(Address::class, 'id_user');
+        return $this->hasMany(Address::class, 'user_id');
     }
+
+    public function profile(){
+        return $this->hasOne(Profile::class,"user_id");
+    }
+
 }

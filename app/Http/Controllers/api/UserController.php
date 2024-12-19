@@ -8,21 +8,11 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth; 
 use App\Models\User;
+use App\Models\Profile;
 use App\Http\Controllers\Resources\UserResource;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
 
     public function login(Request $request)
     {
@@ -43,7 +33,7 @@ class UserController extends Controller
 
         $token = $user->createToken('token')->plainTextToken;
 
-        return response()->json(['token' => $token, 'id_user' => $user->id]);
+        return response()->json(['token' => $token, 'user_id' => $user->id]);
     }
 
     public function register(Request $request){
@@ -74,30 +64,6 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
     public function findEmail(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -120,7 +86,7 @@ class UserController extends Controller
     public function changePassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required',
+            'user_id' => 'required',
             'old_password' => 'required',
             'new_password' => 'required|confirmed|min:8',
             'new_password_confirmation' => 'required_with:new_password|same:new_password|min:8',
@@ -144,5 +110,56 @@ class UserController extends Controller
         $user->save();
 
         return response()->json(['message' => 'Password berhasil diubah']);
+    }
+
+    public function changeProfile(Request $request){
+        $validatedData = Validator::make($request->all(), [
+            'user_id' => "required|string",
+            'number_phone' => "required|string|min:12|max:14",
+            'gender' => 'required|string',  
+            'age' => 'required|string',  
+            'address' => 'required|string|max:255',  
+            'profile_img' => 'required|file|mimes:jpg,png,pdf|max:10240',  
+        ]);
+
+        if ($validatedData->fails()) {
+            return response()->json(['message' => 'Validasi gagal', 'errors' => $validatedData->errors()], 422);
+        }
+
+        $file_path = null;
+        if($request->hasFile("profile_img")){
+            $file_path = $request->file('profile_img')->store('upload/'.$request->input("user_id"),"public");
+            $user = User::find((int)$request->input("user_id"));
+        
+            if (!$user) {
+                return response()->json(['message' => 'User tidak ditemukan'], 404);
+            }
+
+            $user->update([
+                "number_phone" => $request->input("number_phone")
+            ]);
+
+            if($user->profile()->exists()){
+                $user->profile()->update([
+                    "gender" => $request->input("gender","none"),
+                    "age" => (int)$request->input("age"),
+                    "address" => $request->input("address"),
+                    "url_image" => $file_path
+                ]);
+            }else{
+                $user->profile()->create([
+                    "gender" => $request->input("gender","none"),
+                    "age" => (int)$request->input("age"),
+                    "address" => $request->input("address"),
+                    "url_image" => $file_path
+                ]);
+            }
+
+           
+
+            return response()->json(["message" => "berhasil update profile"], 200);
+        }
+        
+        return response()->json(["message" => "berhasil update profile"], 200);
     }
 }

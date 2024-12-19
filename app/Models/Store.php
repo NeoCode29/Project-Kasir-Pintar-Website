@@ -13,11 +13,11 @@ class Store extends Model
 
     public function owner()
     {
-        return $this->belongsTo(User::class, 'id_owner');
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     public function address()
     {
-        return $this->hasOne(Address::class, 'id_store');
+        return $this->hasOne(Address::class, 'store_id');
     }
 }

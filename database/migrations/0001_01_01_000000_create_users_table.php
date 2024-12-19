@@ -6,9 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+    
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -53,13 +51,21 @@ return new class extends Migration
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
+
+        Schema::create('profiles', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->enum('gender', ['male', 'female',"none"])->default("none");
+            $table->integer('age')->unsigned();
+            $table->string('address');
+            $table->string('url_image');
+            $table->foreignID("user_id")->constrained("users")->onDelete("cascade");
+            $table->timestamps();
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
+        Schema::dropIfExists('profiles');
         Schema::dropIfExists('invitations');
         Schema::dropIfExists('notifications');
         Schema::dropIfExists('sessions');

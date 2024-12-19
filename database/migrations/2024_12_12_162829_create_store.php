@@ -16,7 +16,7 @@ return new class extends Migration
 
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_owner')->constrained("users")->onDelete('cascade');
+            $table->foreignId('owner_id')->constrained("users")->onDelete('cascade');
             $table->string('name');
             $table->string('number_phone')->nullable()->default("");
             $table->timestamps();
@@ -24,11 +24,11 @@ return new class extends Migration
 
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->decimal('longitude', 8, 2);
-            $table->decimal('latitude', 8, 2);
+            $table->decimal('longitude', 10, 8);
+            $table->decimal('latitude', 10, 8);
             $table->string('postal_code');
             $table->string('jalan')->default("");
-            $table->foreignId('id_store')->constrained("stores")->onDelete('cascade');
+            $table->foreignId('store_id')->constrained("stores")->onDelete('cascade');
             $table->string('provinsi');
             $table->string('kota');
             $table->string('negara');
@@ -36,8 +36,8 @@ return new class extends Migration
         });
 
         Schema::create('staff', function (Blueprint $table) {
-            $table->foreignId('id_user')->constrained("users")->onDelete('cascade');
-            $table->foreignId('id_store')->constrained("stores")->onDelete('cascade');
+            $table->foreignId('user_id')->constrained("users")->onDelete('cascade');
+            $table->foreignId('store_id')->constrained("stores")->onDelete('cascade');
             $table->timestamps();
         });
     }
