@@ -12,40 +12,30 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
 
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'number_phone',
-        'role',
-    ];
-   
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $fillable = ["name", "email", "password", "number_phone", "role"];
 
+    protected $hidden = ["password", "remember_token"];
 
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            "email_verified_at" => "datetime",
+            "password" => "hashed",
         ];
     }
 
     public function stores()
     {
-        return $this->hasMany(Store::class, 'owner_id');
+        return $this->hasMany(Store::class, "owner_id");
     }
 
-    public function addresses()
+    public function profile()
     {
-        return $this->hasMany(Address::class, 'user_id');
+        return $this->hasOne(Profile::class, "user_id");
     }
 
-    public function profile(){
-        return $this->hasOne(Profile::class,"user_id");
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, "user_id");
     }
-
 }
